@@ -13,15 +13,17 @@ struct DepotBrowser: Reducer {
     @Dependency(\.depot) var depot
 
     struct State: Equatable {
-        var path: [String]
-        var files: [FileDto]
+        var path = [String]()
+        var files = [FileDto]()
     }
 
     enum Action: Equatable {
         case initState
         case backButtonTapped
         case folderTapped(String)
+        case fileTapped(String)
         case depotListResponse(TaskResult<[FileDto]>)
+        case depotGetResponse(TaskResult<Data>)
     }
 
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
@@ -40,10 +42,21 @@ struct DepotBrowser: Reducer {
             return .task { [path = state.path] in
                 await .depotListResponse(TaskResult { try await self.depot.list(path) })
             }
+        case let .fileTapped(file):
+            var fullPath = state.path
+            fullPath.append(file)
+            return .task { [fullPath = fullPath] in
+                await .depotGetResponse(TaskResult { try await self.depot.get(fullPath) })
+            }
         case let .depotListResponse(.success(response)):
             state.files = response
             return .none
         case .depotListResponse(.failure(_)):
+            return .none
+        case let .depotGetResponse(.success(response)):
+            print(response.count)
+            return .none
+        case .depotGetResponse(.failure(_)):
             return .none
         }
     }
@@ -70,15 +83,26 @@ struct DepotBrowserView: View {
                     }
 
                     ForEach(viewStore.files) { file in
-                        Button() {
-                            viewStore.send(.folderTapped(file.name))
-                        } label: {
-                            HStack {
-                                Image(systemName: file.type == .FOLDER ? "folder" : "doc")
-                                Text(file.name)
+                        if file.type == .FOLDER {
+                            Button() {
+                                viewStore.send(.folderTapped(file.name))
+                            } label: {
+                                HStack {
+                                    Image(systemName: "folder").foregroundColor(.gray)
+                                    Text(file.name).foregroundColor(.gray)
+                                }
                             }
                         }
-                        .disabled(file.type == .FILE)
+                        else {
+                            Button() {
+                                viewStore.send(.fileTapped(file.name))
+                            } label: {
+                                HStack {
+                                    Image(systemName: "doc")
+                                    Text(file.name)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -86,5 +110,13 @@ struct DepotBrowserView: View {
                 viewStore.send(.initState)
             }
         }
+    }
+}
+
+struct DepotBrowserView_Previews: PreviewProvider {
+    static var previews: some View {
+        DepotBrowserView(
+            store: Store(initialState: DepotBrowser.State(), reducer: DepotBrowser())
+        )
     }
 }

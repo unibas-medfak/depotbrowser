@@ -5,10 +5,27 @@
 //  Created by Martin Imobersteg on 26.04.23.
 //
 
+import Foundation
 import ComposableArchitecture
 
+struct FileDto: Equatable, Identifiable {
+
+    enum FileType: String {
+        case FILE, FOLDER
+    }
+
+    let id = UUID()
+    let name: String
+    let type: FileType
+}
+
+enum CatError: Error {
+    case runtimeError(String)
+}
+
 struct DepotClient {
-    var list: ([String]) async throws -> [FileDto]
+    var list:([String]) async throws -> [FileDto]
+    var get: ([String]) async throws -> Data
 }
 
 extension DepotClient: DependencyKey {
@@ -50,7 +67,15 @@ extension DepotClient: DependencyKey {
             }
 
             return [FileDto]()
+        },
+        get: { path in
+            if let cat = Bundle.main.url(forResource: "cat", withExtension: "jpeg") {
+                return try Data(contentsOf: cat)
+            }
+
+            throw CatError.runtimeError("miow")
         }
+
     )
 }
 

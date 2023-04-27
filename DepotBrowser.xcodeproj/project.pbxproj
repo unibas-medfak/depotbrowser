@@ -13,7 +13,9 @@
 		EE96944A29F96D9400C09160 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = EE96944929F96D9400C09160 /* ComposableArchitecture */; };
 		EE96944C29F96DB400C09160 /* DepotBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE96944B29F96DB400C09160 /* DepotBrowser.swift */; };
 		EE96944E29F97B6D00C09160 /* DepotClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE96944D29F97B6D00C09160 /* DepotClient.swift */; };
-		EE96945029F97BCF00C09160 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE96944F29F97BCF00C09160 /* Domain.swift */; };
+		EE96945429F9851D00C09160 /* cat.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = EE96945329F9851D00C09160 /* cat.jpeg */; };
+		EE96945629FA429F00C09160 /* CredentialsScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE96945529FA429F00C09160 /* CredentialsScanner.swift */; };
+		EE96945929FA433300C09160 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = EE96945829FA433300C09160 /* CodeScanner */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,7 +25,8 @@
 		EE96944129F963BC00C09160 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		EE96944B29F96DB400C09160 /* DepotBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepotBrowser.swift; sourceTree = "<group>"; };
 		EE96944D29F97B6D00C09160 /* DepotClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepotClient.swift; sourceTree = "<group>"; };
-		EE96944F29F97BCF00C09160 /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
+		EE96945329F9851D00C09160 /* cat.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cat.jpeg; sourceTree = "<group>"; };
+		EE96945529FA429F00C09160 /* CredentialsScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsScanner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE96945929FA433300C09160 /* CodeScanner in Frameworks */,
 				EE96944A29F96D9400C09160 /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -57,10 +61,11 @@
 		EE96943929F963BB00C09160 /* DepotBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				EE96945329F9851D00C09160 /* cat.jpeg */,
 				EE96943A29F963BB00C09160 /* DepotBrowserApp.swift */,
 				EE96944B29F96DB400C09160 /* DepotBrowser.swift */,
+				EE96945529FA429F00C09160 /* CredentialsScanner.swift */,
 				EE96944D29F97B6D00C09160 /* DepotClient.swift */,
-				EE96944F29F97BCF00C09160 /* Domain.swift */,
 				EE96943E29F963BC00C09160 /* Assets.xcassets */,
 				EE96944029F963BC00C09160 /* Preview Content */,
 			);
@@ -93,6 +98,7 @@
 			name = DepotBrowser;
 			packageProductDependencies = (
 				EE96944929F96D9400C09160 /* ComposableArchitecture */,
+				EE96945829FA433300C09160 /* CodeScanner */,
 			);
 			productName = DepotBrowser;
 			productReference = EE96943729F963BB00C09160 /* DepotBrowser.app */;
@@ -124,6 +130,7 @@
 			mainGroup = EE96942E29F963BB00C09160;
 			packageReferences = (
 				EE96944829F96D9400C09160 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				EE96945729FA433300C09160 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 			);
 			productRefGroup = EE96943829F963BB00C09160 /* Products */;
 			projectDirPath = "";
@@ -141,6 +148,7 @@
 			files = (
 				EE96944229F963BC00C09160 /* Preview Assets.xcassets in Resources */,
 				EE96943F29F963BC00C09160 /* Assets.xcassets in Resources */,
+				EE96945429F9851D00C09160 /* cat.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,7 +162,7 @@
 				EE96944C29F96DB400C09160 /* DepotBrowser.swift in Sources */,
 				EE96944E29F97B6D00C09160 /* DepotClient.swift in Sources */,
 				EE96943B29F963BB00C09160 /* DepotBrowserApp.swift in Sources */,
-				EE96945029F97BCF00C09160 /* Domain.swift in Sources */,
+				EE96945629FA429F00C09160 /* CredentialsScanner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,6 +371,14 @@
 				kind = branch;
 			};
 		};
+		EE96945729FA433300C09160 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -370,6 +386,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EE96944829F96D9400C09160 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		EE96945829FA433300C09160 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE96945729FA433300C09160 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
