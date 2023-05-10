@@ -14,7 +14,7 @@ struct DepotBrowser: Reducer {
 
     struct State: Equatable {
         var path = [String]()
-        var files = [FileDto]()
+        var files = [DepotEntry]()
     }
 
     enum Action: Equatable {
@@ -22,7 +22,7 @@ struct DepotBrowser: Reducer {
         case backButtonTapped
         case folderTapped(String)
         case fileTapped(String)
-        case depotListResponse(TaskResult<[FileDto]>)
+        case depotListResponse(TaskResult<[DepotEntry]>)
         case depotGetResponse(TaskResult<Data>)
     }
 
@@ -30,23 +30,23 @@ struct DepotBrowser: Reducer {
         switch action {
         case .initState:
             return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path) })
+                await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
             }
         case .backButtonTapped:
             state.path.removeLast()
             return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path) })
+                await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
             }
         case let .folderTapped(folder):
             state.path.append(folder)
             return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path) })
+                await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
             }
         case let .fileTapped(file):
             var fullPath = state.path
             fullPath.append(file)
             return .task { [fullPath = fullPath] in
-                await .depotGetResponse(TaskResult { try await self.depot.get(fullPath) })
+                await .depotGetResponse(TaskResult { try await self.depot.get(path: fullPath) })
             }
         case let .depotListResponse(.success(response)):
             state.files = response
