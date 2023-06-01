@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE7ED5CD2A0CDE2E00AEFD14 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = EE7ED5CC2A0CDE2E00AEFD14 /* ComposableArchitecture */; };
 		EE96943B29F963BB00C09160 /* DepotBrowserApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE96943A29F963BB00C09160 /* DepotBrowserApp.swift */; };
 		EE96943F29F963BC00C09160 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE96943E29F963BC00C09160 /* Assets.xcassets */; };
 		EE96944229F963BC00C09160 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE96944129F963BC00C09160 /* Preview Assets.xcassets */; };
-		EE96944A29F96D9400C09160 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = EE96944929F96D9400C09160 /* ComposableArchitecture */; };
 		EE96944C29F96DB400C09160 /* DepotBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE96944B29F96DB400C09160 /* DepotBrowser.swift */; };
 		EE96944E29F97B6D00C09160 /* DepotClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE96944D29F97B6D00C09160 /* DepotClient.swift */; };
 		EE96945429F9851D00C09160 /* cat.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = EE96945329F9851D00C09160 /* cat.jpeg */; };
@@ -34,8 +34,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE7ED5CD2A0CDE2E00AEFD14 /* ComposableArchitecture in Frameworks */,
 				EE96945929FA433300C09160 /* CodeScanner in Frameworks */,
-				EE96944A29F96D9400C09160 /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,8 +97,8 @@
 			);
 			name = DepotBrowser;
 			packageProductDependencies = (
-				EE96944929F96D9400C09160 /* ComposableArchitecture */,
 				EE96945829FA433300C09160 /* CodeScanner */,
+				EE7ED5CC2A0CDE2E00AEFD14 /* ComposableArchitecture */,
 			);
 			productName = DepotBrowser;
 			productReference = EE96943729F963BB00C09160 /* DepotBrowser.app */;
@@ -129,8 +129,8 @@
 			);
 			mainGroup = EE96942E29F963BB00C09160;
 			packageReferences = (
-				EE96944829F96D9400C09160 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				EE96945729FA433300C09160 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+				EE7ED5CB2A0CDE2E00AEFD14 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			productRefGroup = EE96943829F963BB00C09160 /* Products */;
 			projectDirPath = "";
@@ -363,7 +363,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		EE96944829F96D9400C09160 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+		EE7ED5CB2A0CDE2E00AEFD14 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture.git";
 			requirement = {
@@ -382,9 +382,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		EE96944929F96D9400C09160 /* ComposableArchitecture */ = {
+		EE7ED5CC2A0CDE2E00AEFD14 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EE96944829F96D9400C09160 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			package = EE7ED5CB2A0CDE2E00AEFD14 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
 		};
 		EE96945829FA433300C09160 /* CodeScanner */ = {

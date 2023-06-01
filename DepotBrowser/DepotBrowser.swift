@@ -26,41 +26,42 @@ struct DepotBrowser: Reducer {
         case depotGetResponse(TaskResult<Data>)
     }
 
-    func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        switch action {
-        case .initState:
-            return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
+    var body: some ReducerOf<Self> {
+        Reduce<State, Action> { state, action in
+            switch action {
+            case .initState:
+                return .task { [path = state.path] in
+                    await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
+                }
+            case .backButtonTapped:
+                state.path.removeLast()
+                return .task { [path = state.path] in
+                    await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
+                }
+            case let .folderTapped(folder):
+                state.path.append(folder)
+                return .task { [path = state.path] in
+                    await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
+                }
+            case let .fileTapped(file):
+                var fullPath = state.path
+                fullPath.append(file)
+                return .task { [fullPath = fullPath] in
+                    await .depotGetResponse(TaskResult { try await self.depot.get(path: fullPath) })
+                }
+            case let .depotListResponse(.success(response)):
+                state.files = response
+                return .none
+            case .depotListResponse(.failure(_)):
+                return .none
+            case let .depotGetResponse(.success(response)):
+                print(response.count)
+                return .none
+            case .depotGetResponse(.failure(_)):
+                return .none
             }
-        case .backButtonTapped:
-            state.path.removeLast()
-            return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
-            }
-        case let .folderTapped(folder):
-            state.path.append(folder)
-            return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
-            }
-        case let .fileTapped(file):
-            var fullPath = state.path
-            fullPath.append(file)
-            return .task { [fullPath = fullPath] in
-                await .depotGetResponse(TaskResult { try await self.depot.get(path: fullPath) })
-            }
-        case let .depotListResponse(.success(response)):
-            state.files = response
-            return .none
-        case .depotListResponse(.failure(_)):
-            return .none
-        case let .depotGetResponse(.success(response)):
-            print(response.count)
-            return .none
-        case .depotGetResponse(.failure(_)):
-            return .none
         }
     }
-
 }
 
 struct DepotBrowserView: View {

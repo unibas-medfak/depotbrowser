@@ -58,8 +58,5 @@ public struct Depot {
     }
 
     public func put(content: Data, atPath: [String]) async throws {
-
-
-
     }
 }
