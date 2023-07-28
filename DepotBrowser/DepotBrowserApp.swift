@@ -12,7 +12,11 @@ import ComposableArchitecture
 struct DepotBrowserApp: App {
     var body: some Scene {
         WindowGroup {
-            DepotBrowserView(store: Store(initialState: DepotBrowser.State(), reducer: DepotBrowser()))
+            DepotBrowserView(
+                store: Store(initialState: DepotBrowser.State()) {
+                    DepotBrowser()
+                }
+            )
         }
     }
 }

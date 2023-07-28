@@ -93,7 +93,9 @@ struct CredentialsScannerView: View {
 struct CredentialsScannerView_Previews: PreviewProvider {
     static var previews: some View {
         CredentialsScannerView(
-            store: Store(initialState: CredentialsScanner.State(), reducer: CredentialsScanner())
+            store: Store(initialState: CredentialsScanner.State()) {
+                CredentialsScanner()
+            }
         )
     }
 }

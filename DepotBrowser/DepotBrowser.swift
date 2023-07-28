@@ -30,24 +30,40 @@ struct DepotBrowser: Reducer {
         Reduce<State, Action> { state, action in
             switch action {
             case .initState:
-                return .task { [path = state.path] in
-                    await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
+                return .run { [path = state.path] send in
+                    await send(
+                        .depotListResponse(
+                            TaskResult { try await self.depot.list(path: path) }
+                        )
+                    )
                 }
             case .backButtonTapped:
                 state.path.removeLast()
-                return .task { [path = state.path] in
-                    await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
+                return .run { [path = state.path] send in
+                    await send(
+                        .depotListResponse(
+                            TaskResult { try await self.depot.list(path: path) }
+                        )
+                    )
                 }
             case let .folderTapped(folder):
                 state.path.append(folder)
-                return .task { [path = state.path] in
-                    await .depotListResponse(TaskResult { try await self.depot.list(path: path) })
+                return .run { [path = state.path] send in
+                    await send(
+                        .depotListResponse(
+                            TaskResult { try await self.depot.list(path: path) }
+                        )
+                    )
                 }
             case let .fileTapped(file):
                 var fullPath = state.path
                 fullPath.append(file)
-                return .task { [fullPath = fullPath] in
-                    await .depotGetResponse(TaskResult { try await self.depot.get(path: fullPath) })
+                return .run { [path = state.path] send in
+                    await send(
+                        .depotListResponse(
+                            TaskResult { try await self.depot.list(path: path) }
+                        )
+                    )
                 }
             case let .depotListResponse(.success(response)):
                 state.files = response
@@ -117,7 +133,9 @@ struct DepotBrowserView: View {
 struct DepotBrowserView_Previews: PreviewProvider {
     static var previews: some View {
         DepotBrowserView(
-            store: Store(initialState: DepotBrowser.State(), reducer: DepotBrowser())
+            store: Store(initialState: DepotBrowser.State()) {
+                DepotBrowser()
+            }
         )
     }
 }
