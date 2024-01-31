@@ -8,107 +8,158 @@
 import SwiftUI
 import ComposableArchitecture
 
-struct DepotBrowser: Reducer {
+@Reducer
+struct DepotBrowser {
 
     @Dependency(\.depot) var depot
 
+    @ObservableState
     struct State: Equatable {
+        @Presents var destination: Destination.State? = nil
         var path = [String]()
         var files = [FileDto]()
     }
 
-    enum Action: Equatable {
+    enum Action {
+        case scanButtonTapped
+        case dismissScanButtonTapped
+        case destination(PresentationAction<Destination.Action>)
         case initState
         case backButtonTapped
         case folderTapped(String)
         case fileTapped(String)
-        case depotListResponse(TaskResult<[FileDto]>)
-        case depotGetResponse(TaskResult<Data>)
+        case depotListResponse([FileDto])
+        case depotGetResponse(Data)
     }
+    
+    @Reducer
+      struct Destination {
+        @ObservableState
+        enum State: Equatable {
+            case scan(CredentialsScanner.State)
+        }
 
-    func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        switch action {
-        case .initState:
-            return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path) })
+        enum Action {
+            case scan(CredentialsScanner.Action)
+        }
+
+        var body: some Reducer<State, Action> {
+          Scope(state: \.scan, action: \.scan) {
+            CredentialsScanner()
+          }
+        }
+      }
+    
+    var body: some Reducer<State, Action> {
+        Reduce { state, action in
+            switch action {
+            case .scanButtonTapped:
+                state.destination = .scan(CredentialsScanner.State())
+                return .none
+            case .dismissScanButtonTapped:
+                state.destination = nil
+                return .none
+            case .destination:
+                    return .none
+            case .initState:
+                return .run { [path = state.path] send in
+                    try await send(.depotListResponse(self.depot.list(path)))
+                }
+            case .backButtonTapped:
+                state.path.removeLast()
+                return .run { [path = state.path] send in
+                    try await send(.depotListResponse(self.depot.list(path)))
+                }
+            case let .folderTapped(folder):
+                state.path.append(folder)
+                return .run { [path = state.path] send in
+                    try await send(.depotListResponse(self.depot.list(path)))
+                }
+            case let .fileTapped(file):
+                var fullPath = state.path
+                fullPath.append(file)
+                return .run { [fullPath = fullPath] send in
+                    try await send(.depotGetResponse(self.depot.get(fullPath)))
+                }
+            case let .depotListResponse(response):
+                state.files = response
+                return .none
+            case let .depotGetResponse(data):
+                print(data.count)
+                return .none
             }
-        case .backButtonTapped:
-            state.path.removeLast()
-            return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path) })
-            }
-        case let .folderTapped(folder):
-            state.path.append(folder)
-            return .task { [path = state.path] in
-                await .depotListResponse(TaskResult { try await self.depot.list(path) })
-            }
-        case let .fileTapped(file):
-            var fullPath = state.path
-            fullPath.append(file)
-            return .task { [fullPath = fullPath] in
-                await .depotGetResponse(TaskResult { try await self.depot.get(fullPath) })
-            }
-        case let .depotListResponse(.success(response)):
-            state.files = response
-            return .none
-        case .depotListResponse(.failure(_)):
-            return .none
-        case let .depotGetResponse(.success(response)):
-            print(response.count)
-            return .none
-        case .depotGetResponse(.failure(_)):
-            return .none
         }
     }
 
 }
 
 struct DepotBrowserView: View {
-    let store: StoreOf<DepotBrowser>
+    @Bindable var store: StoreOf<DepotBrowser>
 
     var body: some View {
-        WithViewStore(self.store, observe: { $0 }) { viewStore in
-            VStack {
-                List {
-                    HStack {
-                        Text(viewStore.path.last ?? "/").font(.system(size: 12))
+        NavigationView {
+            List {
+                HStack {
+                    Text(store.path.last ?? "/").font(.system(size: 12))
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        Button {
-                            viewStore.send(.backButtonTapped)
-                        } label: {
-                            Image(systemName: "arrowshape.turn.up.backward")
-                        }
-                        .frame(maxWidth: 10, alignment: .trailing)
-                        .disabled(viewStore.path.isEmpty)
+                    Button {
+                        store.send(.backButtonTapped)
+                    } label: {
+                        Image(systemName: "arrowshape.turn.up.backward")
                     }
-
-                    ForEach(viewStore.files) { file in
-                        if file.type == .FOLDER {
-                            Button() {
-                                viewStore.send(.folderTapped(file.name))
-                            } label: {
-                                HStack {
-                                    Image(systemName: "folder").foregroundColor(.gray)
-                                    Text(file.name).foregroundColor(.gray)
-                                }
+                    .frame(maxWidth: 10, alignment: .trailing)
+                    .disabled(store.path.isEmpty)
+                }
+                
+                ForEach(store.files) { file in
+                    if file.type == .FOLDER {
+                        Button() {
+                            store.send(.folderTapped(file.name))
+                        } label: {
+                            HStack {
+                                Image(systemName: "folder").foregroundColor(.gray)
+                                Text(file.name).foregroundColor(.gray)
                             }
                         }
-                        else {
-                            Button() {
-                                viewStore.send(.fileTapped(file.name))
-                            } label: {
-                                HStack {
-                                    Image(systemName: "doc")
-                                    Text(file.name)
-                                }
+                    }
+                    else {
+                        Button() {
+                            store.send(.fileTapped(file.name))
+                        } label: {
+                            HStack {
+                                Image(systemName: "doc")
+                                Text(file.name)
                             }
                         }
                     }
                 }
             }
-            .onAppear {
-                viewStore.send(.initState)
+            .toolbar {
+                Button {
+                    store.send(.scanButtonTapped)
+                } label: {
+                    Image(systemName: "qrcode")
+                }
             }
+        }
+        .sheet(item: $store.scope(state: \.destination?.scan, action: \.destination.scan)) { store in
+            NavigationStack {
+                CredentialsScannerView(store: store)
+                    .navigationTitle("Scan Depot QR-Code")
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button {
+                                self.store.send(.dismissScanButtonTapped)
+                            } label: {
+                                Image(systemName: "arrowshape.turn.up.backward")
+                            }
+                            
+                        }
+                    }
+            }
+        }
+        .onAppear {
+            store.send(.initState)
         }
     }
 }
@@ -116,7 +167,9 @@ struct DepotBrowserView: View {
 struct DepotBrowserView_Previews: PreviewProvider {
     static var previews: some View {
         DepotBrowserView(
-            store: Store(initialState: DepotBrowser.State(), reducer: DepotBrowser())
+            store: Store(initialState: DepotBrowser.State()) {
+                DepotBrowser()
+            }
         )
     }
 }
